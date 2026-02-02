@@ -1,0 +1,234 @@
+🛠️ PHASE 1: ADMIN BOOTSTRAPS REALITY (ONE-TIME)
+STEP 1: Admin Adds a VERIFIED REAL PRODUCT
+
+Admin uploads:
+
+Front image
+
+Back image
+
+Left image
+
+Right image
+
+Top image
+
+Bottom image
+
+Label close-up
+
+Seal / cap image
+
+📌 These images are ground truth.
+
+STEP 2: AI CREATES A “REFERENCE FEATURE PROFILE”
+
+AI does NOT store images.
+It extracts features.
+
+Feature Types Extracted
+Feature Group	What AI Learns
+Shape	Bottle symmetry, curves
+Layout	Label position, spacing
+Font	Thickness, spacing
+Color	Histogram, gradients
+Texture	Print noise, surface
+Text	Exact spelling
+
+Internally stored as:
+
+REFERENCE_PROFILE = {
+  shape_vector,
+  layout_vector,
+  font_vector,
+  color_vector,
+  texture_vector,
+  text_signature
+}
+
+
+📌 This is not image matching
+📌 This is feature fingerprinting
+
+🧠 PHASE 2: USER SCANS A PRODUCT (REAL-TIME)
+STEP 3: User Action
+
+User:
+
+Selects product name (e.g., “Bisleri”)
+
+Uploads image from shop
+
+This gives the AI INTENT CONTEXT.
+
+STEP 4: AI PREPROCESSING
+
+AI standardizes input:
+
+Resize
+
+Lighting normalization
+
+Noise removal
+
+Edge enhancement
+
+📌 Prevents camera bias.
+
+STEP 5: FEATURE EXTRACTION (SAME AS ADMIN)
+
+AI extracts the same feature types:
+
+USER_PROFILE = {
+  shape_vector,
+  layout_vector,
+  font_vector,
+  color_vector,
+  texture_vector,
+  text_signature
+}
+
+
+This ensures fair comparison.
+
+⚖️ PHASE 3: HYBRID DECISION LOGIC (CORE PART)
+
+Now the real intelligence begins.
+
+🧠 BRAIN 1: REFERENCE COMPARISON (If Exists)
+
+AI compares:
+
+USER_PROFILE  ↔  REFERENCE_PROFILE
+
+Similarity Scores
+Feature	Similarity
+Shape	92%
+Layout	95%
+Font	90%
+Texture	88%
+Color	91%
+
+📌 High similarity ≠ genuine
+📌 It only means visual imitation
+
+🧠 BRAIN 2: TEXT & NAME LOGIC (CRITICAL)
+
+OCR reads text from image:
+
+Detected Text: "Belsiri"
+Expected Text: "Bisleri"
+
+
+AI applies 3 checks:
+
+1️⃣ Exact Match Check
+
+❌ Fails
+
+2️⃣ Edit Distance
+
+“Bisleri” → “Belsiri” = 1–2 letter change
+⚠️ Suspicious
+
+3️⃣ Phonetic Similarity
+
+Sounds the same
+🚨 High deception risk
+
+📌 This is a known counterfeit strategy
+
+🧠 BRAIN 3: GENERIC AUTHENTICITY AI
+
+This brain works even without admin reference.
+
+It checks:
+
+Print quality realism
+
+Texture consistency
+
+Industrial manufacturing patterns
+
+Anomaly score (Autoencoder)
+
+Example:
+
+Anomaly Score = LOW
+→ Product is well-manufactured
+
+
+📌 This means:
+
+“It is well made, BUT that doesn’t mean it is genuine.”
+
+🚨 PHASE 4: DECEPTION LOGIC (MOST IMPORTANT RULE)
+
+This rule makes the system useful.
+
+IF visual_similarity is HIGH
+AND name_similarity is HIGH
+AND exact_text_match is FALSE
+AND user_intent_mismatch is TRUE
+THEN → DECEPTIVE LOOK-ALIKE
+
+
+📌 This prevents the Belsiri problem
+📌 Alignment no longer fools AI
+
+🧮 PHASE 5: FINAL SCORING ENGINE
+
+AI combines all evidence:
+
+Component	Weight
+Reference similarity	40%
+Text & name logic	30%
+Generic AI & anomaly	20%
+Intent mismatch	10%
+Example Calculation:
+Visual = 90
+Text Match = 20
+Anomaly = 85
+Intent = 10
+
+Final Score = LOW AUTHENTICITY
+
+✅ PHASE 6: FINAL DECISION
+AI Output:
+
+❌ Likely Fake
+Reason:
+
+Product visually imitates the reference
+
+Brand name does not match user intent
+
+High phonetic similarity suggests deception
+
+📌 AI explains WHY, not just WHAT.
+
+🌍 PHASE 7: LOCATION INTELLIGENCE (AFTER FAKE)
+
+If fake detected:
+
+Ask user permission
+
+Capture coarse location:
+
+Country
+
+State
+
+City
+
+District
+
+Stored anonymously.
+
+Admin later sees:
+
+Heatmaps
+
+Fake distribution
+
+Growth patterns

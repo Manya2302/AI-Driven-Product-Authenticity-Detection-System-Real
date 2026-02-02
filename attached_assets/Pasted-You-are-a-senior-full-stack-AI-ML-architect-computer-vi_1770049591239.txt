@@ -1,0 +1,216 @@
+You are a senior full-stack AI/ML architect, computer vision researcher, and product engineer.
+
+Your task is to design and generate a COMPLETE, PRODUCTION-READY, INNOVATION-LEVEL web application called:
+
+“AI-Driven Consumer Product Authenticity Detection System”
+
+The system must detect whether a product is REAL or FAKE using AI/ML, without relying on manufacturer APIs, and must support both ADMIN and USER roles.
+
+========================
+CORE SYSTEM PHILOSOPHY
+========================
+The AI must not magically know brands. It must learn from ADMIN-provided verified reference images and general counterfeit patterns, then compare USER-uploaded product images against those learned feature profiles. Decisions must be probability-based and explainable.
+
+========================
+TECH STACK (MANDATORY)
+========================
+Frontend:
+- HTML5, CSS3, JavaScript
+- Modern UI using Tailwind CSS or custom advanced CSS
+- No basic or default AI-generated UI
+- Responsive, modern, professional, startup-grade design
+
+Backend:
+- Python + FastAPI
+- REST APIs
+- JWT Authentication
+- Role-based access (Admin / User)
+
+Database:
+- MongoDB (mandatory)
+- Separate collections for users, products, reference profiles, scans, results, locations, analytics
+
+AI / ML:
+- PyTorch (mandatory)
+- OpenCV
+- EasyOCR
+- Torchvision
+- Advanced models only:
+  - Vision Transformer (ViT) OR EfficientNet-B4 for visual features
+  - Siamese Network for image similarity
+  - Autoencoder for anomaly detection
+  - Grad-CAM for explainable AI
+- Target accuracy: 95%+ under controlled evaluation
+
+========================
+AUTHENTICATION & NAVIGATION
+========================
+Create:
+- Home Page (landing page with explanation & CTA)
+- Login Page (Admin/User)
+- Signup Page (User only)
+- Admin Dashboard
+- User Dashboard
+- Product Analysis Page
+- Admin Product Management Page
+- Admin User Management Page
+- Fake Product Analytics Page
+- Location-Based Fake Product Heatmap Page
+- Profile Page
+- Logout flow
+
+Include:
+- Navbar with role-based navigation
+- Protected routes
+- Session handling
+- Clean redirects
+
+========================
+ADMIN FUNCTIONALITY
+========================
+Admin must be able to:
+1. Login securely
+2. Add a VERIFIED REAL PRODUCT
+   - Product name
+   - Category
+   - Brand name (as text only, not truth)
+   - Images from ALL angles:
+     front, back, left, right, top, bottom
+   - Label close-up
+   - Cap/seal image
+3. On save:
+   - AI extracts features
+   - Create a REFERENCE FEATURE PROFILE
+   - Store features, not raw images
+4. Manage users (view, block)
+5. View analytics:
+   - Total scans
+   - Fake vs real ratio
+   - Product-wise fake count
+6. View FAKE PRODUCT DISTRIBUTION:
+   - Country → State → City → District
+   - Based on user-shared location
+7. View timeline:
+   - When fake products appeared
+   - Growth trend
+8. Admin CANNOT manually mark products real/fake
+
+========================
+USER FUNCTIONALITY
+========================
+User must be able to:
+1. Signup & Login
+2. Select product they want (e.g., Bisleri)
+3. Upload product image from shop
+4. AI analyzes product
+5. Get result:
+   - Likely Real
+   - Suspicious
+   - Likely Fake
+6. View EXPLANATION:
+   - Image similarity score
+   - Text mismatch
+   - Deceptive look-alike detection
+   - Anomaly score
+7. If FAKE detected:
+   - Ask user permission to share location
+   - Capture location (country/state/city/district only)
+   - Store anonymized data
+8. View their scan history
+
+========================
+AI / ML PIPELINE (VERY IMPORTANT)
+========================
+Implement the following pipeline:
+
+1. Image Preprocessing:
+   - Resize
+   - Normalize
+   - Denoise
+   - Edge enhancement
+
+2. Feature Extraction:
+   - Vision Transformer / EfficientNet for deep features
+   - Extract shape, layout, texture, color embeddings
+
+3. OCR Analysis:
+   - Extract brand text
+   - Extract batch/date
+   - Grammar & spelling check
+   - Detect look-alike names using:
+     - Edit distance
+     - Phonetic similarity
+
+4. Similarity Matching:
+   - Siamese Network compares user image features vs reference profile
+   - Output similarity score
+
+5. Anomaly Detection:
+   - Autoencoder detects deviation from real product patterns
+
+6. Decision Engine:
+   - Weighted scoring:
+     Visual similarity (40%)
+     Text & name logic (30%)
+     Anomaly score (20%)
+     Intent mismatch (10%)
+
+7. Explainability:
+   - Use Grad-CAM to show suspicious regions
+   - Return human-readable reasons
+
+========================
+DATABASE DESIGN (MANDATORY)
+========================
+Collections:
+- users
+- admins
+- products (reference)
+- product_features
+- scans
+- scan_results
+- fake_locations
+- analytics
+
+========================
+FRONTEND REQUIREMENTS
+========================
+- Modern, clean, startup-quality UI
+- No default buttons or layouts
+- Use cards, modals, progress bars
+- Show AI confidence visually
+- Heatmaps & charts for admin analytics
+- Smooth navigation
+
+========================
+OUTPUT REQUIREMENTS
+========================
+Generate:
+1. Full folder structure
+2. Backend FastAPI code
+3. AI model training & inference code
+4. MongoDB schemas
+5. HTML/CSS for all pages
+6. Authentication logic
+7. Admin dashboard logic
+8. User analysis page logic
+9. Fake product location analytics logic
+10. Explainable AI outputs
+11. Comments and documentation
+
+========================
+IMPORTANT CONSTRAINTS
+========================
+- Do NOT simplify the AI
+- Do NOT create dummy logic
+- Do NOT assume brand truth magically
+- Must be explainable
+- Must be innovation-camp ready
+- Must be realistic & scalable
+
+========================
+FINAL GOAL
+========================
+Produce a complete, advanced, real-world AI-powered fake product detection platform with admin-defined reference truth, user-driven analysis, location-based fake tracking, and explainable decisions.
+
+Begin by generating the full system architecture, then backend, then AI models, then frontend.
