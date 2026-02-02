@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - Admin Panel</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-8">
+                    <a href="admin-dashboard.html" class="text-xl font-bold text-primary-600">Admin Panel</a>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="admin-dashboard.html" class="nav-link">Dashboard</a>
+                        <a href="admin-products.html" class="nav-link">Products</a>
+                        <a href="admin-users.html" class="nav-link active">Users</a>
+                        <a href="admin-analytics.html" class="nav-link">Analytics</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="logout-btn" class="btn btn-secondary btn-sm">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">User Management</h1>
+            <p class="text-gray-600">Manage registered users and their access</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="stat-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium mb-1">Total Users</p>
+                        <p class="text-3xl font-bold text-gray-900" id="total-users">0</p>
+                    </div>
+                    <div class="stat-icon bg-blue-100 text-blue-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium mb-1">Active Users</p>
+                        <p class="text-3xl font-bold text-green-600" id="active-users">0</p>
+                    </div>
+                    <div class="stat-icon bg-green-100 text-green-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium mb-1">Blocked Users</p>
+                        <p class="text-3xl font-bold text-red-600" id="blocked-users">0</p>
+                    </div>
+                    <div class="stat-icon bg-red-100 text-red-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="card mb-6">
+            <div class="flex flex-wrap items-center gap-4">
+                <div class="flex-1 min-w-[200px]">
+                    <input 
+                        type="text" 
+                        id="search-input" 
+                        class="form-input" 
+                        placeholder="Search by name or email..."
+                    >
+                </div>
+                <div>
+                    <select id="filter-role" class="form-input">
+                        <option value="">All Roles</option>
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div>
+                    <select id="filter-status" class="form-input">
+                        <option value="">All Status</option>
+                        <option value="true">Active</option>
+                        <option value="false">Blocked</option>
+                    </select>
+                </div>
+                <button id="filter-btn" class="btn btn-secondary">Apply Filters</button>
+            </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="card">
+            <div id="users-container">
+                <div class="text-center py-8">
+                    <div class="spinner"></div>
+                    <p class="text-gray-500 mt-4">Loading users...</p>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination" class="mt-6 flex items-center justify-between border-t border-gray-200 pt-4 hidden">
+                <div class="text-sm text-gray-600">
+                    Showing <span id="showing-from">0</span> to <span id="showing-to">0</span> of <span id="total-count">0</span> users
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button id="prev-btn" class="btn btn-secondary btn-sm" disabled>Previous</button>
+                    <div id="page-numbers" class="flex items-center space-x-1"></div>
+                    <button id="next-btn" class="btn btn-secondary btn-sm">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api-client.js"></script>
+    <script>
+        const apiClient = new APIClient();
+
+        // Check authentication
+        if (!apiClient.isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+
+        // Verify admin access
+        apiClient.getCurrentUser().then(user => {
+            if (user.role !== 'admin') {
+                window.location.href = 'user-dashboard.html';
+            }
+        });
+
+        let currentPage = 1;
+        const pageSize = 10;
+        let totalUsers = 0;
+        let usersData = [];
+
+        // Load users
+        async function loadUsers(page = 1) {
+            try {
+                const response = await apiClient.getUsers(page, pageSize);
+                usersData = response.users || [];
+                totalUsers = response.total || 0;
+                currentPage = page;
+
+                // Apply filters
+                let filteredUsers = applyFilters(usersData);
+
+                displayUsers(filteredUsers);
+                updateStats();
+                updatePagination();
+            } catch (error) {
+                console.error('Failed to load users:', error);
+                showError('Failed to load users');
+            }
+        }
+
+        function applyFilters(users) {
+            const searchQuery = document.getElementById('search-input').value.toLowerCase();
+            const role = document.getElementById('filter-role').value;
+            const status = document.getElementById('filter-status').value;
+
+            let filtered = users;
+
+            if (searchQuery) {
+                filtered = filtered.filter(user => 
+                    user.full_name.toLowerCase().includes(searchQuery) ||
+                    user.email.toLowerCase().includes(searchQuery)
+                );
+            }
+
+            if (role) {
+                filtered = filtered.filter(user => user.role === role);
+            }
+
+            if (status) {
+                filtered = filtered.filter(user => user.is_active.toString() === status);
+            }
+
+            return filtered;
+        }
+
+        function displayUsers(users) {
+            const container = document.getElementById('users-container');
+
+            if (users.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12">
+                        <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                        <p class="text-gray-500">No users found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const table = `
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    User
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Role
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Status
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Joined Date
+                                </th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            ${users.map(user => createUserRow(user)).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            container.innerHTML = table;
+
+            // Add action button listeners
+            document.querySelectorAll('.toggle-status-btn').forEach(btn => {
+                btn.addEventListener('click', () => toggleUserStatus(btn.dataset.email, btn.dataset.status === 'true'));
+            });
+        }
+
+        function createUserRow(user) {
+            const roleBadge = user.role === 'admin' ? 'badge-purple' : 'badge-blue';
+            const statusBadge = user.is_active ? 'badge-success' : 'badge-danger';
+            const statusText = user.is_active ? 'Active' : 'Blocked';
+            const joinDate = new Date(user.created_at).toLocaleDateString();
+            const actionText = user.is_active ? 'Block' : 'Unblock';
+            const actionClass = user.is_active ? 'btn-danger' : 'btn-success';
+
+            return `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10">
+                                <div class="h-10 w-10 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-semibold">
+                                    ${user.full_name.charAt(0).toUpperCase()}
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${user.full_name}</div>
+                                <div class="text-sm text-gray-500">${user.email}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="badge ${roleBadge}">${user.role.toUpperCase()}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="badge ${statusBadge}">${statusText}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${joinDate}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        ${user.role !== 'admin' ? `
+                            <button 
+                                class="btn ${actionClass} btn-sm toggle-status-btn" 
+                                data-email="${user.email}" 
+                                data-status="${user.is_active}"
+                            >
+                                ${actionText}
+                            </button>
+                        ` : '<span class="text-gray-400">Protected</span>'}
+                    </td>
+                </tr>
+            `;
+        }
+
+        async function toggleUserStatus(email, currentStatus) {
+            const action = currentStatus ? 'block' : 'unblock';
+            if (!confirm(`Are you sure you want to ${action} this user?`)) {
+                return;
+            }
+
+            try {
+                await apiClient.updateUser(email, { is_active: !currentStatus });
+                loadUsers(currentPage);
+            } catch (error) {
+                alert(`Failed to ${action} user: ${error.message}`);
+            }
+        }
+
+        function updateStats() {
+            const total = usersData.length;
+            const active = usersData.filter(u => u.is_active).length;
+            const blocked = total - active;
+
+            document.getElementById('total-users').textContent = total;
+            document.getElementById('active-users').textContent = active;
+            document.getElementById('blocked-users').textContent = blocked;
+        }
+
+        function updatePagination() {
+            if (totalUsers === 0) {
+                document.getElementById('pagination').classList.add('hidden');
+                return;
+            }
+
+            document.getElementById('pagination').classList.remove('hidden');
+
+            const from = (currentPage - 1) * pageSize + 1;
+            const to = Math.min(currentPage * pageSize, totalUsers);
+            const totalPages = Math.ceil(totalUsers / pageSize);
+
+            document.getElementById('showing-from').textContent = from;
+            document.getElementById('showing-to').textContent = to;
+            document.getElementById('total-count').textContent = totalUsers;
+
+            document.getElementById('prev-btn').disabled = currentPage === 1;
+            document.getElementById('next-btn').disabled = currentPage === totalPages;
+
+            // Page numbers
+            const pageNumbers = document.getElementById('page-numbers');
+            pageNumbers.innerHTML = '';
+            
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    const btn = document.createElement('button');
+                    btn.className = `px-3 py-1 rounded ${i === currentPage ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`;
+                    btn.textContent = i;
+                    btn.addEventListener('click', () => loadUsers(i));
+                    pageNumbers.appendChild(btn);
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    const span = document.createElement('span');
+                    span.textContent = '...';
+                    span.className = 'px-2 text-gray-500';
+                    pageNumbers.appendChild(span);
+                }
+            }
+        }
+
+        function showError(message) {
+            document.getElementById('users-container').innerHTML = `
+                <div class="text-center py-8">
+                    <p class="text-red-600">${message}</p>
+                </div>
+            `;
+        }
+
+        // Event listeners
+        document.getElementById('filter-btn').addEventListener('click', () => loadUsers(1));
+        document.getElementById('prev-btn').addEventListener('click', () => loadUsers(currentPage - 1));
+        document.getElementById('next-btn').addEventListener('click', () => loadUsers(currentPage + 1));
+
+        // Search on Enter
+        document.getElementById('search-input').addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                loadUsers(1);
+            }
+        });
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            apiClient.logout();
+            window.location.href = 'landing.html';
+        });
+
+        // Initialize
+        loadUsers(1);
+    </script>
+</body>
+</html>

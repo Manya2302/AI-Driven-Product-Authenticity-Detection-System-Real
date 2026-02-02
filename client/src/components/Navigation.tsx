@@ -74,7 +74,9 @@ export function Navigation() {
 
           <div className="flex items-center gap-4">
             <div className="hidden sm:block text-right">
-              <p className="text-sm font-medium text-white">{user?.firstName || 'User'}</p>
+              <p className="text-sm font-medium text-white">
+                {user?.full_name || user?.firstName || "User"}
+              </p>
               <p className="text-xs text-muted-foreground truncate max-w-[150px]">{user?.email}</p>
             </div>
             <Button 

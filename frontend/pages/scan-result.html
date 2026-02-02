@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan Result - AI Product Authenticity Detection</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-8">
+                    <a href="user-dashboard.html" class="text-xl font-bold text-primary-600">AI Authenticity</a>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="user-dashboard.html" class="nav-link">Dashboard</a>
+                        <a href="scan-product.html" class="nav-link">Scan Product</a>
+                        <a href="scan-history.html" class="nav-link">History</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="logout-btn" class="btn btn-secondary btn-sm">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <!-- Loading State -->
+            <div id="loading-state" class="text-center py-16">
+                <div class="spinner"></div>
+                <p class="text-gray-600 mt-4 text-lg">Analyzing product...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="error-state" class="hidden">
+                <div class="card bg-red-50 border-red-200">
+                    <div class="text-center">
+                        <svg class="w-16 h-16 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Failed to Load Results</h2>
+                        <p class="text-gray-600 mb-6" id="error-text"></p>
+                        <a href="scan-product.html" class="btn btn-primary">Scan Another Product</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Content -->
+            <div id="results-content" class="hidden">
+                <!-- Header with Product Info -->
+                <div class="card mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-900" id="product-name"></h1>
+                            <p class="text-gray-600" id="scan-date"></p>
+                        </div>
+                        <button id="share-btn" class="btn btn-secondary btn-sm">Share Result</button>
+                    </div>
+                </div>
+
+                <!-- Verdict Card -->
+                <div id="verdict-card" class="card mb-6">
+                    <div class="text-center py-8">
+                        <div id="verdict-icon" class="mb-4"></div>
+                        <h2 id="verdict-title" class="text-3xl font-bold mb-2"></h2>
+                        <p id="verdict-subtitle" class="text-lg text-gray-600 mb-6"></p>
+                        <div class="max-w-md mx-auto">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-gray-700">Confidence Score</span>
+                                <span id="confidence-percent" class="text-sm font-bold"></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="confidence-bar" class="progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Analysis -->
+                <div class="card mb-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Detailed Analysis</h3>
+                    
+                    <!-- Score Breakdown -->
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-gray-700">Visual Similarity</span>
+                                <span id="visual-score" class="text-sm font-bold"></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="visual-bar" class="progress-fill bg-blue-500"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-gray-700">Text Validation</span>
+                                <span id="text-score" class="text-sm font-bold"></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="text-bar" class="progress-fill bg-purple-500"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-gray-700">Anomaly Detection</span>
+                                <span id="anomaly-score" class="text-sm font-bold"></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="anomaly-bar" class="progress-fill bg-orange-500"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-gray-700">Pattern Consistency</span>
+                                <span id="pattern-score" class="text-sm font-bold"></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="pattern-bar" class="progress-fill bg-teal-500"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Findings -->
+                <div class="card mb-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Key Findings</h3>
+                    <div id="findings-list" class="space-y-3"></div>
+                </div>
+
+                <!-- Recommendations -->
+                <div id="recommendations-card" class="card mb-6 hidden">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Recommendations</h3>
+                    <div id="recommendations-list" class="space-y-3"></div>
+                </div>
+
+                <!-- Location Sharing for Fake Products -->
+                <div id="location-share-card" class="card mb-6 hidden">
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                        <div class="flex items-start">
+                            <svg class="w-6 h-6 text-yellow-400 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-gray-900 mb-2">Help Track Counterfeit Products</h4>
+                                <p class="text-sm text-gray-700 mb-4">Your anonymous location data helps us map fake product distribution and protect other consumers.</p>
+                                <button id="share-location-btn" class="btn btn-warning btn-sm">Share Anonymous Location</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center justify-center space-x-4">
+                    <a href="scan-product.html" class="btn btn-primary">Scan Another Product</a>
+                    <a href="scan-history.html" class="btn btn-secondary">View History</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api-client.js"></script>
+    <script>
+        const apiClient = new APIClient();
+
+        // Check authentication
+        if (!apiClient.isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+
+        // Get scan ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const scanId = urlParams.get('id');
+
+        if (!scanId) {
+            showError('No scan ID provided');
+        } else {
+            loadScanResult(scanId);
+        }
+
+        async function loadScanResult(scanId) {
+            try {
+                const result = await apiClient.getScanResult(scanId);
+                displayResult(result);
+            } catch (error) {
+                showError(error.message || 'Failed to load scan result');
+            }
+        }
+
+        function displayResult(result) {
+            // Hide loading
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('results-content').classList.remove('hidden');
+
+            // Product info
+            document.getElementById('product-name').textContent = result.product_name;
+            document.getElementById('scan-date').textContent = new Date(result.analyzed_at).toLocaleString();
+
+            // Verdict
+            const classification = result.classification;
+            const confidence = Math.round(result.confidence_score * 100);
+            
+            let verdictClass, verdictIcon, verdictTitle, verdictSubtitle;
+            
+            if (classification === 'likely_real') {
+                verdictClass = 'text-green-600 bg-green-50 border-green-200';
+                verdictIcon = `<svg class="w-20 h-20 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+                verdictTitle = 'LIKELY AUTHENTIC';
+                verdictSubtitle = 'This product appears to be genuine';
+            } else if (classification === 'suspicious') {
+                verdictClass = 'text-yellow-600 bg-yellow-50 border-yellow-200';
+                verdictIcon = `<svg class="w-20 h-20 text-yellow-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`;
+                verdictTitle = 'SUSPICIOUS';
+                verdictSubtitle = 'This product shows concerning signs';
+            } else {
+                verdictClass = 'text-red-600 bg-red-50 border-red-200';
+                verdictIcon = `<svg class="w-20 h-20 text-red-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+                verdictTitle = 'LIKELY FAKE';
+                verdictSubtitle = 'This product is likely counterfeit';
+                
+                // Show location sharing
+                document.getElementById('location-share-card').classList.remove('hidden');
+            }
+
+            document.getElementById('verdict-card').className = `card mb-6 ${verdictClass}`;
+            document.getElementById('verdict-icon').innerHTML = verdictIcon;
+            document.getElementById('verdict-title').textContent = verdictTitle;
+            document.getElementById('verdict-title').className = `text-3xl font-bold mb-2 ${verdictClass.split(' ')[0]}`;
+            document.getElementById('verdict-subtitle').textContent = verdictSubtitle;
+            document.getElementById('confidence-percent').textContent = `${confidence}%`;
+            document.getElementById('confidence-bar').style.width = `${confidence}%`;
+
+            // Scores
+            updateScore('visual', result.visual_similarity_score);
+            updateScore('text', result.text_validation_score);
+            updateScore('anomaly', result.anomaly_score);
+            updateScore('pattern', result.pattern_consistency_score);
+
+            // Findings
+            const findingsList = document.getElementById('findings-list');
+            result.explanations.forEach(explanation => {
+                const div = document.createElement('div');
+                div.className = 'flex items-start space-x-3';
+                div.innerHTML = `
+                    <svg class="w-5 h-5 text-primary-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p class="text-gray-700">${explanation}</p>
+                `;
+                findingsList.appendChild(div);
+            });
+
+            // Recommendations
+            if (result.recommendations && result.recommendations.length > 0) {
+                document.getElementById('recommendations-card').classList.remove('hidden');
+                const recList = document.getElementById('recommendations-list');
+                result.recommendations.forEach(rec => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-start space-x-3';
+                    div.innerHTML = `
+                        <svg class="w-5 h-5 text-blue-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                        <p class="text-gray-700">${rec}</p>
+                    `;
+                    recList.appendChild(div);
+                });
+            }
+
+            // Location sharing
+            document.getElementById('share-location-btn').addEventListener('click', shareLocation);
+        }
+
+        function updateScore(type, score) {
+            const percent = Math.round(score * 100);
+            document.getElementById(`${type}-score`).textContent = `${percent}%`;
+            document.getElementById(`${type}-bar`).style.width = `${percent}%`;
+        }
+
+        async function shareLocation() {
+            // Simple implementation - in production, use proper geolocation API
+            const country = prompt('Enter your country:');
+            const state = prompt('Enter your state/province:');
+            const city = prompt('Enter your city:');
+            
+            if (country && state && city) {
+                try {
+                    await apiClient.shareLocation(scanId, { country, state, city, consent: true });
+                    alert('Thank you for helping track counterfeit products!');
+                    document.getElementById('location-share-card').classList.add('hidden');
+                } catch (error) {
+                    alert('Failed to share location: ' + error.message);
+                }
+            }
+        }
+
+        function showError(message) {
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('error-state').classList.remove('hidden');
+            document.getElementById('error-text').textContent = message;
+        }
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            apiClient.logout();
+            window.location.href = 'landing.html';
+        });
+    </script>
+</body>
+</html>

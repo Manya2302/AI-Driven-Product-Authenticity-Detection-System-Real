@@ -9,6 +9,7 @@ import { Loader2 } from "lucide-react";
 
 // Pages
 import Landing from "@/pages/Landing";
+import SignIn from "@/pages/SignIn";
 import Dashboard from "@/pages/Dashboard";
 import ScanHistory from "@/pages/ScanHistory";
 import AdminProducts from "@/pages/admin/Products";
@@ -29,7 +30,13 @@ function Router() {
   }
 
   if (!user) {
-    return <Landing />;
+    return (
+      <Switch>
+        <Route path="/signin" component={SignIn} />
+        <Route path="/" component={Landing} />
+        <Route component={NotFound} />
+      </Switch>
+    );
   }
 
   return (

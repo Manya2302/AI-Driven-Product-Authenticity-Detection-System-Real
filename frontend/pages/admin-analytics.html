@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Admin Panel</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-8">
+                    <a href="admin-dashboard.html" class="text-xl font-bold text-primary-600">Admin Panel</a>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="admin-dashboard.html" class="nav-link">Dashboard</a>
+                        <a href="admin-products.html" class="nav-link">Products</a>
+                        <a href="admin-users.html" class="nav-link">Users</a>
+                        <a href="admin-analytics.html" class="nav-link active">Analytics</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="logout-btn" class="btn btn-secondary btn-sm">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Advanced Analytics</h1>
+            <p class="text-gray-600">Deep insights into fake product distribution and trends</p>
+        </div>
+
+        <!-- Time Range Selector -->
+        <div class="card mb-6">
+            <div class="flex items-center space-x-4">
+                <label class="text-sm font-medium text-gray-700">Time Range:</label>
+                <select id="time-range" class="form-input max-w-xs">
+                    <option value="7">Last 7 days</option>
+                    <option value="30" selected>Last 30 days</option>
+                    <option value="90">Last 90 days</option>
+                    <option value="365">Last year</option>
+                </select>
+                <button id="refresh-btn" class="btn btn-secondary">
+                    <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    Refresh Data
+                </button>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Product Analytics -->
+            <div class="card">
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Product-wise Fake Detection</h2>
+                <canvas id="productChart" height="250"></canvas>
+            </div>
+
+            <!-- Category Distribution -->
+            <div class="card">
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Category Distribution</h2>
+                <canvas id="categoryChart" height="250"></canvas>
+            </div>
+        </div>
+
+        <!-- Location Heatmap -->
+        <div class="card mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-bold text-gray-900">Fake Product Location Heatmap</h2>
+                <select id="location-level" class="form-input max-w-xs">
+                    <option value="country">By Country</option>
+                    <option value="state">By State</option>
+                    <option value="city">By City</option>
+                </select>
+            </div>
+            <div id="location-heatmap">
+                <div class="text-center py-8">
+                    <div class="spinner"></div>
+                    <p class="text-gray-500 mt-4">Loading location data...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Temporal Trends -->
+        <div class="card mb-8">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Scan Trends Over Time</h2>
+            <canvas id="temporalChart" height="100"></canvas>
+        </div>
+
+        <!-- Detection Rate Trend -->
+        <div class="card mb-8">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Fake Detection Rate Trend</h2>
+            <canvas id="rateChart" height="100"></canvas>
+        </div>
+
+        <!-- Top Statistics -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="card bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white/80 text-sm font-medium mb-1">Average Confidence</p>
+                        <p class="text-3xl font-bold" id="avg-confidence">0%</p>
+                    </div>
+                    <svg class="w-12 h-12 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="card bg-gradient-to-br from-green-500 to-green-600 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white/80 text-sm font-medium mb-1">Authenticity Rate</p>
+                        <p class="text-3xl font-bold" id="authenticity-rate">0%</p>
+                    </div>
+                    <svg class="w-12 h-12 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="card bg-gradient-to-br from-red-500 to-red-600 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white/80 text-sm font-medium mb-1">Fake Detection Rate</p>
+                        <p class="text-3xl font-bold" id="fake-rate">0%</p>
+                    </div>
+                    <svg class="w-12 h-12 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="card bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white/80 text-sm font-medium mb-1">Most Targeted</p>
+                        <p class="text-xl font-bold" id="most-targeted">-</p>
+                    </div>
+                    <svg class="w-12 h-12 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api-client.js"></script>
+    <script>
+        const apiClient = new APIClient();
+
+        // Check authentication
+        if (!apiClient.isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+
+        // Verify admin access
+        apiClient.getCurrentUser().then(user => {
+            if (user.role !== 'admin') {
+                window.location.href = 'user-dashboard.html';
+            }
+        });
+
+        let charts = {};
+
+        // Load all analytics
+        async function loadAnalytics() {
+            const days = parseInt(document.getElementById('time-range').value);
+            
+            try {
+                const [stats, trends, heatmap] = await Promise.all([
+                    apiClient.getDashboardStats(),
+                    apiClient.getTemporalTrends(days),
+                    apiClient.getLocationHeatmap()
+                ]);
+
+                updateTopStats(stats);
+                createProductChart(stats);
+                createCategoryChart(stats);
+                createTemporalChart(trends);
+                createRateChart(trends);
+                displayLocationHeatmap(heatmap);
+            } catch (error) {
+                console.error('Failed to load analytics:', error);
+            }
+        }
+
+        function updateTopStats(stats) {
+            const totalScans = stats.total_scans || 0;
+            const authenticCount = stats.authentic_count || 0;
+            const fakeCount = stats.fake_count || 0;
+
+            const avgConfidence = totalScans > 0 ? 
+                Math.round((stats.average_confidence || 0) * 100) : 0;
+            const authenticityRate = totalScans > 0 ? 
+                Math.round((authenticCount / totalScans) * 100) : 0;
+            const fakeRate = totalScans > 0 ? 
+                Math.round((fakeCount / totalScans) * 100) : 0;
+
+            document.getElementById('avg-confidence').textContent = avgConfidence + '%';
+            document.getElementById('authenticity-rate').textContent = authenticityRate + '%';
+            document.getElementById('fake-rate').textContent = fakeRate + '%';
+
+            // Most targeted product
+            if (stats.products_with_fakes && stats.products_with_fakes.length > 0) {
+                const mostTargeted = stats.products_with_fakes[0];
+                document.getElementById('most-targeted').textContent = mostTargeted.product_name;
+            }
+        }
+
+        function createProductChart(stats) {
+            const products = stats.products_with_fakes || [];
+            const top10 = products.slice(0, 10);
+
+            if (charts.productChart) charts.productChart.destroy();
+
+            const ctx = document.getElementById('productChart').getContext('2d');
+            charts.productChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: top10.map(p => p.product_name),
+                    datasets: [{
+                        label: 'Fake Detections',
+                        data: top10.map(p => p.fake_count),
+                        backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                        borderColor: 'rgba(239, 68, 68, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createCategoryChart(stats) {
+            // Aggregate by category
+            const categoryMap = {};
+            (stats.products_with_fakes || []).forEach(product => {
+                const category = product.category || 'Other';
+                categoryMap[category] = (categoryMap[category] || 0) + product.fake_count;
+            });
+
+            const labels = Object.keys(categoryMap);
+            const data = Object.values(categoryMap);
+
+            if (charts.categoryChart) charts.categoryChart.destroy();
+
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            charts.categoryChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            '#3b82f6', '#ef4444', '#10b981', '#f59e0b',
+                            '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+        }
+
+        function createTemporalChart(trends) {
+            if (charts.temporalChart) charts.temporalChart.destroy();
+
+            const ctx = document.getElementById('temporalChart').getContext('2d');
+            charts.temporalChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: trends.map(t => new Date(t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
+                    datasets: [{
+                        label: 'Total Scans',
+                        data: trends.map(t => t.count),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createRateChart(trends) {
+            if (charts.rateChart) charts.rateChart.destroy();
+
+            const ctx = document.getElementById('rateChart').getContext('2d');
+            charts.rateChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: trends.map(t => new Date(t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
+                    datasets: [
+                        {
+                            label: 'Authentic',
+                            data: trends.map(t => t.authentic_count || 0),
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Fake',
+                            data: trends.map(t => t.fake_count || 0),
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function displayLocationHeatmap(heatmap) {
+            const container = document.getElementById('location-heatmap');
+            const level = document.getElementById('location-level').value;
+
+            if (!heatmap || heatmap.length === 0) {
+                container.innerHTML = '<p class="text-center py-8 text-gray-500">No location data available</p>';
+                return;
+            }
+
+            // Sort by count descending
+            const sorted = heatmap.sort((a, b) => b.count - b.count);
+            const maxCount = sorted[0].count;
+
+            const html = `
+                <div class="space-y-3">
+                    ${sorted.slice(0, 20).map(location => {
+                        const percentage = Math.round((location.count / maxCount) * 100);
+                        return `
+                            <div class="flex items-center">
+                                <div class="w-48 flex-shrink-0">
+                                    <span class="text-sm font-medium text-gray-700">
+                                        ${location[level] || location.country}
+                                    </span>
+                                </div>
+                                <div class="flex-1 mx-4">
+                                    <div class="w-full bg-gray-200 rounded-full h-4">
+                                        <div 
+                                            class="bg-gradient-to-r from-red-500 to-red-600 h-4 rounded-full" 
+                                            style="width: ${percentage}%"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div class="w-20 text-right">
+                                    <span class="text-sm font-semibold text-gray-900">${location.count} reports</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        // Event listeners
+        document.getElementById('time-range').addEventListener('change', loadAnalytics);
+        document.getElementById('location-level').addEventListener('change', () => {
+            apiClient.getLocationHeatmap().then(displayLocationHeatmap);
+        });
+        document.getElementById('refresh-btn').addEventListener('click', loadAnalytics);
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            apiClient.logout();
+            window.location.href = 'landing.html';
+        });
+
+        // Initialize
+        loadAnalytics();
+    </script>
+</body>
+</html>

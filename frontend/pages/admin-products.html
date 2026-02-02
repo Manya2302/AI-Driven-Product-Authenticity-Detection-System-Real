@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Products - Admin Panel</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-8">
+                    <a href="admin-dashboard.html" class="text-xl font-bold text-primary-600">Admin Panel</a>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="admin-dashboard.html" class="nav-link">Dashboard</a>
+                        <a href="admin-products.html" class="nav-link active">Products</a>
+                        <a href="admin-users.html" class="nav-link">Users</a>
+                        <a href="admin-analytics.html" class="nav-link">Analytics</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="logout-btn" class="btn btn-secondary btn-sm">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Product Management</h1>
+                <p class="text-gray-600">Add and manage verified product reference profiles</p>
+            </div>
+            <button id="add-product-btn" class="btn btn-primary">
+                <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                Add Product
+            </button>
+        </div>
+
+        <!-- Products List -->
+        <div class="card">
+            <div id="products-list">
+                <div class="text-center py-8">
+                    <div class="spinner"></div>
+                    <p class="text-gray-500 mt-4">Loading products...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div id="add-product-modal" class="modal hidden">
+        <div class="modal-content max-w-4xl">
+            <div class="modal-header">
+                <h2 class="text-2xl font-bold text-gray-900">Add Verified Product</h2>
+                <button id="close-modal-btn" class="modal-close">&times;</button>
+            </div>
+
+            <div id="modal-error" class="alert alert-danger hidden mb-4"></div>
+
+            <form id="add-product-form" class="space-y-6">
+                <!-- Product Details -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label for="product-name" class="form-label">Product Name *</label>
+                        <input type="text" id="product-name" class="form-input" required placeholder="e.g., Bisleri Water 1L">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="brand-name" class="form-label">Brand Name *</label>
+                        <input type="text" id="brand-name" class="form-input" required placeholder="e.g., Bisleri">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category" class="form-label">Category *</label>
+                        <select id="category" class="form-input" required>
+                            <option value="">Select category</option>
+                            <option value="beverages">Beverages</option>
+                            <option value="food">Food Products</option>
+                            <option value="cosmetics">Cosmetics</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="pharmaceuticals">Pharmaceuticals</option>
+                            <option value="clothing">Clothing</option>
+                            <option value="accessories">Accessories</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group md:col-span-2">
+                        <label for="description" class="form-label">Description (Optional)</label>
+                        <textarea id="description" class="form-input" rows="3" placeholder="Additional product details..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Image Upload Section -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Product Images (All Required)</h3>
+                    <p class="text-sm text-gray-600 mb-4">Upload clear, high-quality images from all angles for best AI analysis</p>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="image-upload-box">
+                            <label for="image-front" class="cursor-pointer block">
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-primary-400 transition-colors">
+                                    <div class="text-center">
+                                        <svg class="w-8 h-8 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                        </svg>
+                                        <p class="text-xs text-gray-600 font-medium">Front View</p>
+                                        <p class="text-xs text-gray-400">Required</p>
+                                    </div>
+                                    <img class="preview-img hidden mt-2 rounded" />
+                                </div>
+                            </label>
+                            <input type="file" id="image-front" accept="image/*" class="hidden" required>
+                        </div>
+
+                        <div class="image-upload-box">
+                            <label for="image-back" class="cursor-pointer block">
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-primary-400 transition-colors">
+                                    <div class="text-center">
+                                        <svg class="w-8 h-8 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                        </svg>
+                                        <p class="text-xs text-gray-600 font-medium">Back View</p>
+                                        <p class="text-xs text-gray-400">Required</p>
+                                    </div>
+                                    <img class="preview-img hidden mt-2 rounded" />
+                                </div>
+                            </label>
+                            <input type="file" id="image-back" accept="image/*" class="hidden" required>
+                        </div>
+
+                        <div class="image-upload-box">
+                            <label for="image-left" class="cursor-pointer block">
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-primary-400 transition-colors">
+                                    <div class="text-center">
+                                        <svg class="w-8 h-8 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                        </svg>
+                                        <p class="text-xs text-gray-600 font-medium">Left Side</p>
+                                        <p class="text-xs text-gray-400">Required</p>
+                                    </div>
+                                    <img class="preview-img hidden mt-2 rounded" />
+                                </div>
+                            </label>
+                            <input type="file" id="image-left" accept="image/*" class="hidden" required>
+                        </div>
+
+                        <div class="image-upload-box">
+                            <label for="image-right" class="cursor-pointer block">
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-primary-400 transition-colors">
+                                    <div class="text-center">
+                                        <svg class="w-8 h-8 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                        </svg>
+                                        <p class="text-xs text-gray-600 font-medium">Right Side</p>
+                                        <p class="text-xs text-gray-400">Required</p>
+                                    </div>
+                                    <img class="preview-img hidden mt-2 rounded" />
+                                </div>
+                            </label>
+                            <input type="file" id="image-right" accept="image/*" class="hidden" required>
+                        </div>
+
+                        <div class="image-upload-box">
+                            <label for="image-top" class="cursor-pointer block">
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-primary-400 transition-colors">
+                                    <div class="text-center">
+                                        <svg class="w-8 h-8 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                        </svg>
+                                        <p class="text-xs text-gray-600 font-medium">Top View</p>
+                                        <p class="text-xs text-gray-400">Required</p>
+                                    </div>
+                                    <img class="preview-img hidden mt-2 rounded" />
+                                </div>
+                            </label>
+                            <input type="file" id="image-top" accept="image/*" class="hidden" required>
+                        </div>
+
+                        <div class="image-upload-box">
+                            <label for="image-bottom" class="cursor-pointer block">
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-primary-400 transition-colors">
+                                    <div class="text-center">
+                                        <svg class="w-8 h-8 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                        </svg>
+                                        <p class="text-xs text-gray-600 font-medium">Bottom View</p>
+                                        <p class="text-xs text-gray-400">Required</p>
+                                    </div>
+                                    <img class="preview-img hidden mt-2 rounded" />
+                                </div>
+                            </label>
+                            <input type="file" id="image-bottom" accept="image/*" class="hidden" required>
+                        </div>
+
+                        <div class="image-upload-box">
+                            <label for="image-label" class="cursor-pointer block">
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-primary-400 transition-colors">
+                                    <div class="text-center">
+                                        <svg class="w-8 h-8 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                        </svg>
+                                        <p class="text-xs text-gray-600 font-medium">Label Close-up</p>
+                                        <p class="text-xs text-gray-400">Required</p>
+                                    </div>
+                                    <img class="preview-img hidden mt-2 rounded" />
+                                </div>
+                            </label>
+                            <input type="file" id="image-label" accept="image/*" class="hidden" required>
+                        </div>
+
+                        <div class="image-upload-box">
+                            <label for="image-seal" class="cursor-pointer block">
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-primary-400 transition-colors">
+                                    <div class="text-center">
+                                        <svg class="w-8 h-8 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                        </svg>
+                                        <p class="text-xs text-gray-600 font-medium">Cap/Seal</p>
+                                        <p class="text-xs text-gray-400">Required</p>
+                                    </div>
+                                    <img class="preview-img hidden mt-2 rounded" />
+                                </div>
+                            </label>
+                            <input type="file" id="image-seal" accept="image/*" class="hidden" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex items-center justify-end space-x-4">
+                    <button type="button" id="cancel-btn" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="submit-btn">
+                        <span id="submit-text">Add Product</span>
+                        <span id="submit-loading" class="hidden">
+                            <svg class="animate-spin h-5 w-5 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Processing...
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/api-client.js"></script>
+    <script>
+        const apiClient = new APIClient();
+
+        // Check authentication
+        if (!apiClient.isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+
+        // Verify admin access
+        apiClient.getCurrentUser().then(user => {
+            if (user.role !== 'admin') {
+                window.location.href = 'user-dashboard.html';
+            }
+        });
+
+        // Load products
+        async function loadProducts() {
+            try {
+                const products = await apiClient.getProducts();
+                displayProducts(products);
+            } catch (error) {
+                console.error('Failed to load products:', error);
+            }
+        }
+
+        function displayProducts(products) {
+            const container = document.getElementById('products-list');
+            
+            if (products.length === 0) {
+                container.innerHTML = '<p class="text-center py-8 text-gray-500">No products added yet</p>';
+                return;
+            }
+
+            const html = products.map(product => `
+                <div class="border-b border-gray-200 last:border-0 py-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-900 text-lg">${product.product_name}</h3>
+                            <div class="flex items-center space-x-4 text-sm text-gray-500 mt-1">
+                                <span>Brand: ${product.brand_name}</span>
+                                <span>•</span>
+                                <span>Category: ${product.category}</span>
+                                <span>•</span>
+                                <span>Added: ${new Date(product.created_at).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-danger btn-sm delete-btn" data-id="${product.product_id}">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = html;
+
+            // Add delete handlers
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', () => deleteProduct(btn.dataset.id));
+            });
+        }
+
+        // Modal handling
+        const modal = document.getElementById('add-product-modal');
+        document.getElementById('add-product-btn').addEventListener('click', () => {
+            modal.classList.remove('hidden');
+        });
+
+        document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+        document.getElementById('cancel-btn').addEventListener('click', closeModal);
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            document.getElementById('add-product-form').reset();
+        }
+
+        // Image preview
+        ['front', 'back', 'left', 'right', 'top', 'bottom', 'label', 'seal'].forEach(type => {
+            const input = document.getElementById(`image-${type}`);
+            input.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const preview = input.parentElement.querySelector('.preview-img');
+                        preview.src = e.target.result;
+                        preview.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+
+        // Form submission
+        document.getElementById('add-product-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('product_name', document.getElementById('product-name').value);
+            formData.append('brand_name', document.getElementById('brand-name').value);
+            formData.append('category', document.getElementById('category').value);
+            formData.append('description', document.getElementById('description').value);
+
+            // Add all images
+            ['front', 'back', 'left', 'right', 'top', 'bottom', 'label', 'seal'].forEach(type => {
+                const input = document.getElementById(`image-${type}`);
+                if (input.files[0]) {
+                    formData.append(`image_${type}`, input.files[0]);
+                }
+            });
+
+            const submitBtn = document.getElementById('submit-btn');
+            const submitText = document.getElementById('submit-text');
+            const submitLoading = document.getElementById('submit-loading');
+
+            submitText.classList.add('hidden');
+            submitLoading.classList.remove('hidden');
+            submitBtn.disabled = true;
+
+            try {
+                await apiClient.createProduct(formData);
+                closeModal();
+                loadProducts();
+                alert('Product added successfully!');
+            } catch (error) {
+                document.getElementById('modal-error').textContent = error.message;
+                document.getElementById('modal-error').classList.remove('hidden');
+            } finally {
+                submitText.classList.remove('hidden');
+                submitLoading.classList.add('hidden');
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Delete product
+        async function deleteProduct(productId) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                try {
+                    await apiClient.deleteProduct(productId);
+                    loadProducts();
+                } catch (error) {
+                    alert('Failed to delete product: ' + error.message);
+                }
+            }
+        }
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            apiClient.logout();
+            window.location.href = 'landing.html';
+        });
+
+        // Initialize
+        loadProducts();
+    </script>
+</body>
+</html>

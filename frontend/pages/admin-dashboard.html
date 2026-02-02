@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - AI Product Authenticity Detection</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-8">
+                    <a href="admin-dashboard.html" class="text-xl font-bold text-primary-600">Admin Panel</a>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="admin-dashboard.html" class="nav-link active">Dashboard</a>
+                        <a href="admin-products.html" class="nav-link">Products</a>
+                        <a href="admin-users.html" class="nav-link">Users</a>
+                        <a href="admin-analytics.html" class="nav-link">Analytics</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span id="admin-name" class="text-gray-700"></span>
+                    <button id="logout-btn" class="btn btn-secondary btn-sm">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
+            <p class="text-gray-600">Monitor system performance and manage products</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="dashboard-grid mb-8">
+            <div class="stat-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium mb-1">Total Products</p>
+                        <p class="text-3xl font-bold text-gray-900" id="total-products">0</p>
+                    </div>
+                    <div class="stat-icon bg-purple-100 text-purple-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium mb-1">Total Scans</p>
+                        <p class="text-3xl font-bold text-gray-900" id="total-scans">0</p>
+                    </div>
+                    <div class="stat-icon bg-blue-100 text-blue-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium mb-1">Registered Users</p>
+                        <p class="text-3xl font-bold text-gray-900" id="total-users">0</p>
+                    </div>
+                    <div class="stat-icon bg-green-100 text-green-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium mb-1">Fake Products Detected</p>
+                        <p class="text-3xl font-bold text-red-600" id="fake-count">0</p>
+                    </div>
+                    <div class="stat-icon bg-red-100 text-red-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Scan Results Chart -->
+            <div class="card">
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Scan Results Distribution</h2>
+                <canvas id="resultsChart" height="250"></canvas>
+            </div>
+
+            <!-- Temporal Trends Chart -->
+            <div class="card">
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Scans Over Time (Last 30 Days)</h2>
+                <canvas id="trendsChart" height="250"></canvas>
+            </div>
+        </div>
+
+        <!-- Top Products with Fake Detections -->
+        <div class="card mb-8">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Products with Most Fake Detections</h2>
+            <div id="top-fake-products">
+                <div class="text-center py-8">
+                    <div class="spinner"></div>
+                    <p class="text-gray-500 mt-4">Loading data...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Recent System Activity</h2>
+            <div id="recent-activity">
+                <div class="text-center py-8">
+                    <div class="spinner"></div>
+                    <p class="text-gray-500 mt-4">Loading activity...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api-client.js"></script>
+    <script>
+        const apiClient = new APIClient();
+
+        // Check authentication
+        if (!apiClient.isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+
+        // Load admin data
+        async function loadAdminData() {
+            try {
+                const user = await apiClient.getCurrentUser();
+                if (user.role !== 'admin') {
+                    alert('Access denied. Admin privileges required.');
+                    window.location.href = 'user-dashboard.html';
+                    return;
+                }
+                document.getElementById('admin-name').textContent = user.full_name;
+            } catch (error) {
+                console.error('Failed to load admin data:', error);
+                apiClient.logout();
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Load dashboard stats
+        async function loadDashboardStats() {
+            try {
+                const stats = await apiClient.getDashboardStats();
+                
+                document.getElementById('total-products').textContent = stats.total_products || 0;
+                document.getElementById('total-scans').textContent = stats.total_scans || 0;
+                document.getElementById('total-users').textContent = stats.total_users || 0;
+                document.getElementById('fake-count').textContent = stats.fake_detections || 0;
+
+                // Create charts
+                createResultsChart(stats);
+                loadTemporalTrends();
+                loadTopFakeProducts(stats);
+            } catch (error) {
+                console.error('Failed to load dashboard stats:', error);
+            }
+        }
+
+        // Create results distribution chart
+        function createResultsChart(stats) {
+            const ctx = document.getElementById('resultsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Authentic', 'Suspicious', 'Fake'],
+                    datasets: [{
+                        data: [
+                            stats.authentic_count || 0,
+                            stats.suspicious_count || 0,
+                            stats.fake_count || 0
+                        ],
+                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load temporal trends
+        async function loadTemporalTrends() {
+            try {
+                const trends = await apiClient.getTemporalTrends(30);
+                const ctx = document.getElementById('trendsChart').getContext('2d');
+                
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: trends.map(t => new Date(t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
+                        datasets: [{
+                            label: 'Scans',
+                            data: trends.map(t => t.count),
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    precision: 0
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Failed to load temporal trends:', error);
+            }
+        }
+
+        // Load top fake products
+        function loadTopFakeProducts(stats) {
+            const container = document.getElementById('top-fake-products');
+            const products = stats.products_with_fakes || [];
+
+            if (products.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-4">No fake products detected yet</p>';
+                return;
+            }
+
+            const html = products.slice(0, 5).map((product, index) => {
+                const percentage = stats.total_scans > 0 ? Math.round((product.fake_count / stats.total_scans) * 100) : 0;
+                return `
+                    <div class="flex items-center justify-between py-3 border-b border-gray-200 last:border-0">
+                        <div class="flex items-center space-x-4 flex-1">
+                            <span class="text-2xl font-bold text-gray-300">${index + 1}</span>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">${product.product_name}</h3>
+                                <p class="text-sm text-gray-500">${product.fake_count} fake detections</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="w-32 bg-gray-200 rounded-full h-2">
+                                <div class="bg-red-500 h-2 rounded-full" style="width: ${percentage}%"></div>
+                            </div>
+                            <span class="text-sm font-medium text-gray-700">${percentage}%</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html;
+        }
+
+        // Logout handler
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            apiClient.logout();
+            window.location.href = 'landing.html';
+        });
+
+        // Initialize
+        loadAdminData();
+        loadDashboardStats();
+    </script>
+</body>
+</html>

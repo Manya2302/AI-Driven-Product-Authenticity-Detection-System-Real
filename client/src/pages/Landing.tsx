@@ -1,6 +1,6 @@
 /*
   LANDING PAGE
-  For logged-out users. Uses Replit Auth link (/api/login).
+  For logged-out users. Uses local sign-in route (/signin).
 */
 import { Link } from "wouter";
 import { ShieldCheck, ScanFace, TrendingUp, CheckCircle } from "lucide-react";
@@ -25,7 +25,7 @@ export default function Landing() {
             <Button variant="ghost" className="text-muted-foreground hover:text-white hidden sm:flex">
               Enterprise
             </Button>
-            <a href="/api/login">
+            <a href="/signin">
               <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium">
                 Sign In
               </Button>
@@ -59,7 +59,7 @@ export default function Landing() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-in fade-in slide-in-from-bottom-16 duration-1000">
-              <a href="/api/login">
+              <a href="/signin">
                 <Button size="lg" className="h-14 px-8 text-lg rounded-full bg-white text-background hover:bg-white/90">
                   Start Verifying Free
                 </Button>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+            font-size: 16px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Login - AI Product Authenticity</h1>
+    
+    <form id="loginForm">
+        <input type="email" id="email" placeholder="Email" value="admin@authenticity.ai" required>
+        <input type="password" id="password" placeholder="Password" value="Admin@123" required>
+        <button type="submit">Login</button>
+    </form>
+    
+    <div id="result"></div>
+    
+    <script>
+        const API_URL = 'https://orange-garbanzo-jjqg4pjx7pwc555-8000.app.github.dev';
+        
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('result');
+            
+            resultDiv.textContent = 'Logging in...';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<strong>✅ Login Successful!</strong>\n\n` +
+                        `Email: ${data.user.email}\n` +
+                        `Name: ${data.user.full_name}\n` +
+                        `Role: ${data.user.role}\n\n` +
+                        `Token: ${data.access_token.substring(0, 50)}...`;
+                    
+                    // Store token
+                    localStorage.setItem('access_token', data.access_token);
+                } else {
+                    resultDiv.innerHTML = `<strong>❌ Login Failed</strong>\n\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>❌ Error</strong>\n\n${error.message}`;
+            }
+        });
+        
+        // Display saved token if exists
+        const savedToken = localStorage.getItem('access_token');
+        if (savedToken) {
+            document.getElementById('result').textContent = `Token in localStorage:\n${savedToken.substring(0, 50)}...`;
+        }
+    </script>
+</body>
+</html>
