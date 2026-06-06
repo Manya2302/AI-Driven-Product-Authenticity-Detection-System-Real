@@ -1,6 +1,66 @@
-node_modules
-dist
+# Dependency directories
+node_modules/
+jspm_packages/
+web_stage/
+
+# Build outputs
+dist/
+build/
+out/
+server/public/
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.development
+.env.test
+.env*.local
+backend/.env
+backend/.env.local
+frontend/.env
+frontend/.env.local
+
+# Python caches and virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.env/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# IDE / Editor folders and OS files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 .DS_Store
-server/public
-vite.config.ts.*
+Thumbs.db
+
+# Replit/Local Agent States & Caches
+.local/
+.replit
+.aptitude/
+replit.nix
+.config/
+
+# Runtime uploads, logs, and database files
+uploads/
+logs/
+backend/uploads/
+backend/logs/
+*.log
+*.sqlite
+*.db
+backend/data/*.json
+
+# Archives
 *.tar.gz
+*.zip
+vite.config.ts.*

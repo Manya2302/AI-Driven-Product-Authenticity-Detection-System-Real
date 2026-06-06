@@ -113,8 +113,8 @@ A state-of-the-art web application that uses advanced AI/ML techniques to detect
 ### Step 1: Clone Repository
 
 ```bash
-git clone https://github.com/your-repo/authenticity-detection-system.git
-cd authenticity-detection-system
+git clone https://github.com/Manya2302/AI-Driven-Product-Authenticity-Detection-System-Real.git
+cd AI-Driven-Product-Authenticity-Detection-System-Real
 ```
 
 ### Step 2: Backend Setup
@@ -283,7 +283,7 @@ Classification:
 ## 📁 Project Structure
 
 ```
-authenticity-detection-system/
+AI-Driven-Product-Authenticity-Detection-System-Real/
 ├── backend/
 │   ├── app/
 │   │   ├── api/              # API endpoints

@@ -28,8 +28,8 @@ This guide covers deploying the system to production environments.
 
 1. **Clone and Configure**
 ```bash
-git clone <repository-url>
-cd authenticity-detection-system
+git clone https://github.com/Manya2302/AI-Driven-Product-Authenticity-Detection-System-Real.git
+cd AI-Driven-Product-Authenticity-Detection-System-Real
 
 # Copy and edit environment file
 cp backend/.env.example backend/.env
